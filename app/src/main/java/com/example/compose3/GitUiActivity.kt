@@ -28,7 +28,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.Compose3.network.GithubRemoteDataSource
 import com.Compose3.network.RetrofitBuilder
 import com.example.compose3.ui.theme.Compose3Theme
 import kotlinx.coroutines.CoroutineScope

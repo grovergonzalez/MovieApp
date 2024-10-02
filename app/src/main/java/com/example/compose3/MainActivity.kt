@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
@@ -26,9 +27,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
-import com.Compose3.network.Movie
+import com.Compose3.network.MovieRemoteDataSource
+import com.Compose3.network.MovieResponseDto
 import com.Compose3.network.RetrofitBuilder
 import com.example.compose3.ui.theme.Compose3Theme
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,20 +40,29 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             Compose3Theme {
-
+                MovieApp()
             }
         }
     }
 }
 
 @Composable
-fun MovieScreen() {
-    var movies by remember { mutableStateOf(listOf<Movie>()) }
+fun MovieApp() {
+    val movieDataSource = MovieRemoteDataSource(RetrofitBuilder)
+    var movies by remember { mutableStateOf(listOf<MovieResponseDto>()) }
     var isLoading by remember { mutableStateOf(true) }
 
+    // Llamada a la API para obtener las películas
     LaunchedEffect(Unit) {
-        val response = RetrofitBuilder.apiService.getPopularMovies()
-        movies = response.results
+        isLoading = true
+        try {
+            val response = withContext(Dispatchers.IO) {
+                movieDataSource.getPopularMovies()
+            }
+            movies = response.movies // Asigna la lista de películas
+        } catch (e: Exception) {
+            println("Error fetching movies: ${e.message}")
+        }
         isLoading = false
     }
 
@@ -57,20 +70,19 @@ fun MovieScreen() {
         CircularProgressIndicator()
     } else {
         LazyColumn {
-            items(movies) { movie ->
-                MovieItem(movie)
+            items(movies.size) { movie ->
+                MovieItem(movies[movie])
             }
         }
     }
 }
 
 @Composable
-fun MovieItem(movie: Movie) {
+fun MovieItem(movie: MovieResponseDto) {
     Card(modifier = Modifier.padding(8.dp)) {
         Row(modifier = Modifier.padding(16.dp)) {
-            // Usar Coil para cargar la imagen del poster
             Image(
-                painter = rememberImagePainter("https://image.tmdb.org/t/p/w500${movie.posterPath}"),
+                painter = rememberImagePainter("https://image.tmdb.org/t/p/w500${movie.poster}"),
                 contentDescription = movie.title,
                 modifier = Modifier.size(100.dp)
             )
@@ -78,4 +90,10 @@ fun MovieItem(movie: Movie) {
             Text(text = movie.title)
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun DefaultPreview() {
+    MovieApp()
 }
