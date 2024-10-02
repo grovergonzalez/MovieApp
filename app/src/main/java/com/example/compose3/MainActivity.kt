@@ -114,26 +114,35 @@ fun MovieApp(
 
 @Composable
 fun MovieItem(
-    movie: MovieResponseDto)
-{
+    movie: MovieResponseDto
+) {
     Card(
         modifier = Modifier
             .padding(8.dp)
             .fillMaxWidth()
-            .aspectRatio(2 / 3f),
-        shape = RoundedCornerShape(7.dp))
-    {
-        Row(modifier = Modifier.padding(16.dp)) {
+            .aspectRatio(0.7f), // Relación de aspecto para permitir más espacio al texto.
+        shape = RoundedCornerShape(7.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             Image(
                 painter = rememberImagePainter("https://image.tmdb.org/t/p/w500${movie.poster}"),
                 contentDescription = movie.title,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(0.9f) // Deja más espacio para el texto.
             )
-            Spacer(modifier = Modifier.height(2.dp))
-            Text(modifier = Modifier.padding(2.dp),
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
                 text = movie.title,
-                color = Color.Blue,
-                textAlign = TextAlign.Center)
+                color = Color.Black,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .padding(top = 8.dp)
+                    .fillMaxWidth()
+            )
         }
     }
 }
