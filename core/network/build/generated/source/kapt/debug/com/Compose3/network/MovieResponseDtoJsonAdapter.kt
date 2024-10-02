@@ -17,27 +17,27 @@ import kotlin.Unit
 import kotlin.collections.emptySet
 import kotlin.text.buildString
 
-public class AvatarResponseDtoJsonAdapter(
+public class MovieResponseDtoJsonAdapter(
   moshi: Moshi,
-) : JsonAdapter<AvatarResponseDto>() {
-  private val options: JsonReader.Options = JsonReader.Options.of("login", "avatar_url")
+) : JsonAdapter<MovieResponseDto>() {
+  private val options: JsonReader.Options = JsonReader.Options.of("title", "poster_path")
 
   private val stringAdapter: JsonAdapter<String> = moshi.adapter(String::class.java, emptySet(),
-      "login")
+      "title")
 
-  public override fun toString(): String = buildString(39) {
-      append("GeneratedJsonAdapter(").append("AvatarResponseDto").append(')') }
+  public override fun toString(): String = buildString(38) {
+      append("GeneratedJsonAdapter(").append("MovieResponseDto").append(')') }
 
-  public override fun fromJson(reader: JsonReader): AvatarResponseDto {
-    var login: String? = null
-    var url: String? = null
+  public override fun fromJson(reader: JsonReader): MovieResponseDto {
+    var title: String? = null
+    var poster: String? = null
     reader.beginObject()
     while (reader.hasNext()) {
       when (reader.selectName(options)) {
-        0 -> login = stringAdapter.fromJson(reader) ?: throw Util.unexpectedNull("login", "login",
+        0 -> title = stringAdapter.fromJson(reader) ?: throw Util.unexpectedNull("title", "title",
             reader)
-        1 -> url = stringAdapter.fromJson(reader) ?: throw Util.unexpectedNull("url", "avatar_url",
-            reader)
+        1 -> poster = stringAdapter.fromJson(reader) ?: throw Util.unexpectedNull("poster",
+            "poster_path", reader)
         -1 -> {
           // Unknown name, skip it.
           reader.skipName()
@@ -46,21 +46,21 @@ public class AvatarResponseDtoJsonAdapter(
       }
     }
     reader.endObject()
-    return AvatarResponseDto(
-        login = login ?: throw Util.missingProperty("login", "login", reader),
-        url = url ?: throw Util.missingProperty("url", "avatar_url", reader)
+    return MovieResponseDto(
+        title = title ?: throw Util.missingProperty("title", "title", reader),
+        poster = poster ?: throw Util.missingProperty("poster", "poster_path", reader)
     )
   }
 
-  public override fun toJson(writer: JsonWriter, value_: AvatarResponseDto?): Unit {
+  public override fun toJson(writer: JsonWriter, value_: MovieResponseDto?): Unit {
     if (value_ == null) {
       throw NullPointerException("value_ was null! Wrap in .nullSafe() to write nullable values.")
     }
     writer.beginObject()
-    writer.name("login")
-    stringAdapter.toJson(writer, value_.login)
-    writer.name("avatar_url")
-    stringAdapter.toJson(writer, value_.url)
+    writer.name("title")
+    stringAdapter.toJson(writer, value_.title)
+    writer.name("poster_path")
+    stringAdapter.toJson(writer, value_.poster)
     writer.endObject()
   }
 }
